@@ -73,6 +73,7 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-right: 10px; /* Add margin to create space between buttons */
     }
 
     button:hover {
@@ -119,13 +120,13 @@
         <label for="location">Location:</label>
         <select name="location" id="location" required>
           <option value="">Select a choice </option>
-          <option value="maharashtra">Maharashtra</option>
-  <option value="mumbai">Mumbai</option>
-  <option value="pune">Pune</option>
-  <option value="satara">Satara</option>
-  <option value="sangli">Sangli</option>
+          <option value="maharashtra">Delhi</option>
+          <option value="mumbai">Mumbai</option>
+          <option value="pune">Pune</option>
+          <option value="satara">Banglore</option>
         </select>
       </div>
+      <button onclick="previousStep()">Previous</button>
       <button onclick="nextStep('documents')">Next</button>
     </div>
 
@@ -138,6 +139,7 @@
         <label for="license">Upload License (Optional):</label>
         <input type="file" id="license" name="license" accept=".pdf,.doc,.docx">
       </div>
+      <button onclick="previousStep()">Previous</button>
       <button onclick="nextStep('images-videos')">Next</button>
     </div>
 
@@ -154,32 +156,78 @@
         <label for="video">Upload Video (Optional):</label>
         <input type="file" id="video" name="video" accept=".mp4,.mov,.avi">
       </div>
+      <button onclick="previousStep()">Previous</button>
       <button onclick="submitForm()">Submit</button>
     </div>
 
     <script>
-      function nextStep(stepId) {
-        
-        const currentForm = document.querySelector('.current-form');
-        currentForm.classList.remove('current-form');
-
+      function validatePhoneNumber(phone) {
+        // Validate that phone number has exactly 10 digits
+        return /^\d{10}$/.test(phone);
+      }
+    
+      function validateEmail(email) {
       
+        return /\S+@\S+\.\S+/.test(email);
+      }
+    
+      function nextStep(stepId) {
+        const currentForm = document.querySelector('.current-form');
+        const phoneInput = document.getElementById('phone');
+        const emailInput = document.getElementById('email');
+    
+        if (currentForm.id === 'user-details') {
+         
+          if (!validatePhoneNumber(phoneInput.value)) {
+            alert('Please enter a valid 10-digit phone number.');
+            return;
+          }
+    
+          if (!validateEmail(emailInput.value)) {
+            alert('Please enter a valid email address.');
+            return;
+          }
+        }
+    
+        currentForm.classList.remove('current-form');
+    
         const nextForm = document.getElementById(stepId);
         nextForm.classList.add('current-form');
-
-       
+    
         const steps = document.querySelectorAll('.step-indicator span');
         for (let i = 0; i < steps.length; i++) {
           steps[i].classList.remove('active');
         }
         document.getElementById(stepId).classList.add('active');
       }
-
+    
+      function previousStep() {
+        const currentForm = document.querySelector('.current-form');
+        currentForm.classList.remove('current-form');
+    
+        let previousForm;
+        if (currentForm.id === 'region-location') {
+          previousForm = document.getElementById('user-details');
+        } else if (currentForm.id === 'documents') {
+          previousForm = document.getElementById('region-location');
+        } else if (currentForm.id === 'images-videos') {
+          previousForm = document.getElementById('documents');
+        }
+    
+        previousForm.classList.add('current-form');
+    
+        const steps = document.querySelectorAll('.step-indicator span');
+        for (let i = 0; i < steps.length; i++) {
+          steps[i].classList.remove('active');
+        }
+        previousForm.classList.add('active');
+      }
+    
       function submitForm() {
-      
         alert('Form submitted successfully!');
       }
     </script>
   </div>
 </body>
 </html>
+
